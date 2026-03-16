@@ -25,7 +25,7 @@ jobs:
         run: npm run build
 
       - name: Build Docker Image
-        run: docker build -t react-app .
+        run: sudo docker build -t react-app .
 
       - name: Deploy to Azure VM
         uses: appleboy/ssh-action@v1.0.3
@@ -34,7 +34,7 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            docker stop react-app || true
-            docker rm react-app || true
-            docker build -t react-app .
-            docker run -d -p 80:80 --name react-app react-app
+            sudo docker stop react-app || true
+            sudo docker rm react-app || true
+            sudo docker build -t react-app .
+            sudo docker run -d -p 80:80 --name react-app react-app
