@@ -24,11 +24,17 @@ jobs:
       - name: Build React App
         run: npm run build
 
+      - name: Build Docker Image
+        run: docker build -t react-app .
+
       - name: Deploy to Azure VM
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          source: "build/*"
-          target: "/var/www/html"
+          script: |
+            docker stop react-app || true
+            docker rm react-app || true
+            docker build -t react-app .
+            docker run -d -p 80:80 --name react-app react-app
